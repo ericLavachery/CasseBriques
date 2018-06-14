@@ -68,13 +68,13 @@ function update() {
 function initBricks() {
     brickInfo = {
         width: 50,
-        height: 20,
+        height: 30,
         count: {
             row: 3,
             col: 7
         },
         offset: {
-            top: 50,
+            top: 45,
             left: 60
         },
         padding: 10
