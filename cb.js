@@ -16,12 +16,13 @@ var brickBonus = 1;
 var vitesse = 150;
 // var playing = false;
 // var startButton;
+var ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
 
 function preload() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
-    game.stage.backgroundColor = '#eee';
+    game.stage.backgroundColor = '#eeeeee';
     game.load.image('ball', 'img/ball.png');
     game.load.image('paddle', 'img/paddle.png');
     game.load.image('brick', 'img/brick.png');
@@ -31,7 +32,7 @@ function preload() {
 }
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    ball = game.add.sprite(game.world.width*0.5, game.world.height-25, 'ball');
+    ball = game.add.sprite(game.world.width*ballstart, game.world.height-25, 'ball');
     ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
     ball.anchor.set(0.5);
     game.physics.enable(ball, Phaser.Physics.ARCADE);
@@ -41,7 +42,7 @@ function create() {
     game.physics.arcade.checkCollision.down = false;
     ball.checkWorldBounds = true;
     ball.events.onOutOfBounds.add(ballLeaveScreen, this);
-    paddle = game.add.sprite(game.world.width*0.5, game.world.height-5, 'paddle');
+    paddle = game.add.sprite(game.world.width*ballstart, game.world.height-5, 'paddle');
     paddle.anchor.set(0.5,1);
     game.physics.enable(paddle, Phaser.Physics.ARCADE);
     paddle.body.immovable = true;
@@ -145,8 +146,9 @@ function ballLeaveScreen() {
     if(lives) {
         livesText.setText('Lives: '+lives);
         lifeLostText.visible = true;
-        ball.reset(game.world.width*0.5, game.world.height-25);
-        paddle.reset(game.world.width*0.5, game.world.height-5);
+        ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
+        ball.reset(game.world.width*ballstart, game.world.height-25);
+        paddle.reset(game.world.width*ballstart, game.world.height-5);
         game.input.onDown.addOnce(function(){
             lifeLostText.visible = false;
             ball.body.velocity.set(vitesse, -vitesse);
