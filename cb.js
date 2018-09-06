@@ -36,7 +36,9 @@ function create() {
     ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
     ball.anchor.set(0.5);
     game.physics.enable(ball, Phaser.Physics.ARCADE);
-    ball.body.velocity.set(vitesse, -vitesse);
+    game.input.onDown.addOnce(function(){
+        ball.body.velocity.set(vitesse, -vitesse);
+    }, this);
     ball.body.collideWorldBounds = true;
     ball.body.bounce.set(1);
     game.physics.arcade.checkCollision.down = false;
