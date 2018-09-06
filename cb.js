@@ -17,7 +17,7 @@ var brickBonus = 1;
 var vitesse = 150;
 // var level = new Array();
 var level = ["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","m","b","b","b","b","b","b","b","b"];
-var stage = 1;
+var stage = 4;
 // var playing = false;
 // var startButton;
 var ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
@@ -56,8 +56,9 @@ function create() {
     // initBricks();
     // initLevel();
     getLevelData();
-    textStyle = { font: '18px Arial', fill: '#0095DD' };
+    textStyle = { font: '12px Arial', fill: '#00dd8d' };
     scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
+    stageText = game.add.text(game.world.width*0.46, 5, 'Stage 1', textStyle);
     livesText = game.add.text(game.world.width-5, 5, 'Lives: '+lives, textStyle);
     livesText.anchor.set(1,0);
     lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.6, 'Life lost, click to continue', textStyle);
@@ -123,7 +124,6 @@ function initBricks() {
         }
     }
 }
-
 function getLevelData() {
     var request = new XMLHttpRequest();
     request.open("POST", "levels.json");
@@ -140,7 +140,6 @@ function getLevelData() {
     };
     request.send();
 }
-
 function parseLevels(levelsJSON, stage) {
     if (levelsJSON == null || levelsJSON.trim() == "") {
         return;
@@ -150,9 +149,12 @@ function parseLevels(levelsJSON, stage) {
         console.log("Error: Data is empty");
         return;
     }
+    if (stage > levelsArray.length) {
+        console.log("No more stages");
+        stage = 1;
+    }
     level = levelsArray[stage];
 }
-
 function initLevel() {
     // console.log('in init '+level);
     brickInfo = {
@@ -232,8 +234,9 @@ function ballHitBrick(ball, brick) {
         }
     }
     if (count_alive <= 1) {
-        alert('You destroyed level '+stage+', congratulations!');
+        alert('You destroyed stage '+stage+', congratulations!');
         stage++;
+        stageText.setText('Stage '+stage);
         // location.reload();
         getLevelData();
         ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
