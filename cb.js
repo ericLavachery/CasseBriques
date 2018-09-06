@@ -119,6 +119,16 @@ function initBricks() {
         }
     }
 }
+var level = [
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h",
+    "m", "b", "h"];
 function initLevel() {
     brickInfo = {
         width: 50,
@@ -139,10 +149,9 @@ function initLevel() {
     hardbricks = game.add.group();
     for(c=0; c<brickInfo.count.col; c++) {
         for(r=0; r<brickInfo.count.row; r++) {
-            bnum++;
             var brickX = (c*(brickInfo.width+brickInfo.padding))+brickInfo.offset.left;
             var brickY = (r*(brickInfo.height+brickInfo.padding))+brickInfo.offset.top;
-            if (bnum == 1 || bnum == 5 || bnum == 9 || bnum == 11 || bnum == 13 || bnum == 17 || bnum == 21 || bnum == 23 || bnum == 25) {
+            if (level[bnum] == 'm') {
                 newBrick = game.add.sprite(brickX, brickY, 'metal');
                 game.physics.enable(newBrick, Phaser.Physics.ARCADE);
                 newBrick.body.immovable = true;
@@ -158,7 +167,7 @@ function initLevel() {
                 } else {
                     brickBonus += 6;
                 }
-            } else if (bnum == 3 || bnum == 6 || bnum == 12 || bnum == 15 || bnum == 18 || bnum == 24 || bnum == 27) {
+            } else if (level[bnum] == 'h') {
                 newBrick = game.add.sprite(brickX, brickY, 'hardbrick');
                 game.physics.enable(newBrick, Phaser.Physics.ARCADE);
                 newBrick.body.immovable = true;
@@ -171,6 +180,7 @@ function initLevel() {
                 newBrick.anchor.set(0.5);
                 bricks.add(newBrick);
             }
+            bnum++;
         }
     }
 }
