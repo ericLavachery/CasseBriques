@@ -15,6 +15,9 @@ var lifeLostText;
 var brickValue = 10;
 var brickBonus = 1;
 var vitesse = 150;
+// var level = new Array();
+var level = ["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","m","b","b","b","b","b","b","b","b"];
+var stage = 1;
 // var playing = false;
 // var startButton;
 var ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
@@ -51,7 +54,8 @@ function create() {
     game.physics.enable(paddle, Phaser.Physics.ARCADE);
     paddle.body.immovable = true;
     // initBricks();
-    initLevel();
+    // initLevel();
+    getLevelData();
     textStyle = { font: '18px Arial', fill: '#0095DD' };
     scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
     livesText = game.add.text(game.world.width-5, 5, 'Lives: '+lives, textStyle);
@@ -119,17 +123,38 @@ function initBricks() {
         }
     }
 }
-var level = [
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h",
-    "m", "b", "h"];
+
+function getLevelData() {
+    var request = new XMLHttpRequest();
+    request.open("POST", "levels.json");
+    request.onreadystatechange = function() {
+        if (this.readyState == this.DONE && this.status == 200) {
+            if (this.responseText) {
+                parseLevels(this.responseText, stage);
+                initLevel();
+            }
+            else {
+                console.log("Error: Data is empty");
+            }
+        }
+    };
+    request.send();
+}
+
+function parseLevels(levelsJSON, stage) {
+    if (levelsJSON == null || levelsJSON.trim() == "") {
+        return;
+    }
+    var levelsArray = JSON.parse(levelsJSON);
+    if (levelsArray.length == 0) {
+        console.log("Error: Data is empty");
+        return;
+    }
+    level = levelsArray[stage];
+}
+
 function initLevel() {
+    // console.log('in init '+level);
     brickInfo = {
         width: 50,
         height: 30,
@@ -151,6 +176,7 @@ function initLevel() {
         for(r=0; r<brickInfo.count.row; r++) {
             var brickX = (c*(brickInfo.width+brickInfo.padding))+brickInfo.offset.left;
             var brickY = (r*(brickInfo.height+brickInfo.padding))+brickInfo.offset.top;
+            // console.log(level[bnum]);
             if (level[bnum] == 'm') {
                 newBrick = game.add.sprite(brickX, brickY, 'metal');
                 game.physics.enable(newBrick, Phaser.Physics.ARCADE);
@@ -186,11 +212,12 @@ function initLevel() {
 }
 function ballHitBrick(ball, brick) {
     var killTween = game.add.tween(brick.scale);
-    killTween.to({x:0,y:0}, 200, Phaser.Easing.Linear.None);
+    killTween.to({x:0,y:0}, 50, Phaser.Easing.Linear.None);
     killTween.onComplete.addOnce(function(){
         brick.kill();
     }, this);
     killTween.start();
+    // brick.kill();
     score += brickValue;
     scoreText.setText('Points: '+score);
     var count_alive = 0;
@@ -199,9 +226,23 @@ function ballHitBrick(ball, brick) {
             count_alive++;
         }
     }
+    for (i = 0; i < hardbricks.children.length; i++) {
+        if (hardbricks.children[i].alive == true) {
+            count_alive++;
+        }
+    }
     if (count_alive <= 1) {
-        alert('You won the game, congratulations!');
-        location.reload();
+        alert('You destroyed level '+stage+', congratulations!');
+        stage++;
+        // location.reload();
+        getLevelData();
+        ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
+        ball.reset(game.world.width*ballstart, game.world.height-25);
+        paddle.reset(game.world.width*ballstart, game.world.height-5);
+        game.input.onDown.addOnce(function(){
+            lifeLostText.visible = false;
+            ball.body.velocity.set(vitesse, -vitesse);
+        }, this);
     }
 }
 function ballHitHardbrick(ball, hardbrick) {
