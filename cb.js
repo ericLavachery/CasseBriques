@@ -17,7 +17,7 @@ var brickBonus = 1;
 var vitesse = 150;
 // var level = new Array();
 var level = ["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","m","b","b","b","b","b","b","b","b"];
-var stage = 4;
+var stage = 1;
 // var playing = false;
 // var startButton;
 var ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
@@ -213,13 +213,13 @@ function initLevel() {
     }
 }
 function ballHitBrick(ball, brick) {
-    var killTween = game.add.tween(brick.scale);
-    killTween.to({x:0,y:0}, 50, Phaser.Easing.Linear.None);
-    killTween.onComplete.addOnce(function(){
-        brick.kill();
-    }, this);
-    killTween.start();
-    // brick.kill();
+    // var killTween = game.add.tween(brick.scale);
+    // killTween.to({x:0,y:0}, 50, Phaser.Easing.Linear.None);
+    // killTween.onComplete.addOnce(function(){
+    //     brick.kill();
+    // }, this);
+    // killTween.start();
+    brick.kill();
     score += brickValue;
     scoreText.setText('Points: '+score);
     var count_alive = 0;
