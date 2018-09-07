@@ -1,5 +1,10 @@
 var game = new Phaser.Game(640, 320, Phaser.AUTO, null, {preload: preload, create: create, update: update});
 
+var stage = getParamByName('stage');
+if (stage == '' || stage == null) {
+    var stage = 1;
+}
+
 var ball;
 var paddle;
 var bricks;
@@ -15,18 +20,14 @@ var lifeLostText;
 var brickValue = 10;
 var brickBonus = 1;
 var vitesse = 150;
-// var level = new Array();
 var level = ["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","m","b","b","b","b","b","b","b","b"];
-var stage = 1;
-// var playing = false;
-// var startButton;
 var ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
 
 function preload() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
-    game.stage.backgroundColor = '#eeeeee';
+    game.stage.backgroundColor = '#e3f4bf';
     game.load.image('ball', 'img/ball.png');
     game.load.image('paddle', 'img/paddle.png');
     game.load.image('brick', 'img/brick.png');
@@ -54,7 +55,6 @@ function create() {
     game.physics.enable(paddle, Phaser.Physics.ARCADE);
     paddle.body.immovable = true;
     // initBricks();
-    // initLevel();
     getLevelData();
     textStyle = { font: '12px Arial', fill: '#00dd8d' };
     scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
@@ -64,18 +64,13 @@ function create() {
     lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.6, 'Life lost, click to continue', textStyle);
     lifeLostText.anchor.set(0.5);
     lifeLostText.visible = false;
-    // startButton = game.add.button(game.world.width*0.5, game.world.height*0.5, 'button', startGame, this, 1, 0, 2);
-    // startButton.anchor.set(0.5);
 }
 function update() {
     game.physics.arcade.collide(ball, paddle, ballHitPaddle);
     game.physics.arcade.collide(ball, bricks, ballHitBrick);
     game.physics.arcade.collide(ball, metals, ballHitMetal);
     game.physics.arcade.collide(ball, hardbricks, ballHitHardbrick);
-    paddle.x = game.input.x || game.world.width*0.5;
-    // if(playing) {
-    //     paddle.x = game.input.x || game.world.width*0.5;
-    // }
+    paddle.x = game.input.mousePointer.x || game.world.width*0.5;
 }
 function initBricks() {
     brickInfo = {
@@ -213,13 +208,13 @@ function initLevel() {
     }
 }
 function ballHitBrick(ball, brick) {
-    // var killTween = game.add.tween(brick.scale);
-    // killTween.to({x:0,y:0}, 50, Phaser.Easing.Linear.None);
-    // killTween.onComplete.addOnce(function(){
-    //     brick.kill();
-    // }, this);
-    // killTween.start();
-    brick.kill();
+    var killTween = game.add.tween(brick.scale);
+    killTween.to({x:0,y:0}, 50, Phaser.Easing.Linear.None);
+    killTween.onComplete.addOnce(function(){
+        brick.kill();
+    }, this);
+    killTween.start();
+    // brick.kill();
     score += brickValue;
     scoreText.setText('Points: '+score);
     var count_alive = 0;
@@ -238,6 +233,7 @@ function ballHitBrick(ball, brick) {
         stage++;
         stageText.setText('Stage '+stage);
         // location.reload();
+        metals.destroy(true,true);
         getLevelData();
         ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
         ball.reset(game.world.width*ballstart, game.world.height-25);
@@ -249,11 +245,11 @@ function ballHitBrick(ball, brick) {
     }
 }
 function ballHitHardbrick(ball, hardbrick) {
+    brickX = hardbrick.world.x;
+    brickY = hardbrick.world.y;
     hardbrick.kill();
     score += brickValue;
     scoreText.setText('Points: '+score);
-    brickX = hardbrick.world.x;
-    brickY = hardbrick.world.y;
     newBrick = game.add.sprite(brickX, brickY, 'brick');
     game.physics.enable(newBrick, Phaser.Physics.ARCADE);
     newBrick.body.immovable = true;
@@ -286,4 +282,13 @@ function ballLeaveScreen() {
         alert('You lost, game over!');
         location.reload();
     }
+}
+function getParamByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
