@@ -1,4 +1,4 @@
-function checkFilled(zeid) {
+function bgFill(zeid) {
     var inputVal = document.getElementById(zeid);
     if (inputVal.value == "b") {
         inputVal.style.backgroundColor = "#E23232";
@@ -20,8 +20,11 @@ if (getParamByName('brk1') != '' && getParamByName('brk1') != null) {
     var i = 0;
     while (i < 27) {
         o = i+1;
-        newStage[i] = getParamByName('brk'+o);
+        paramValue = getParamByName('brk'+o);
+        newStage[i] = paramValue;
         i = i + 1;
+        document.getElementById(i).value = paramValue;
+        bgFill(i);
         if (i >= 100) {break;}
     }
     var level = newStage;
