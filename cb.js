@@ -140,13 +140,16 @@ function parseLevels(levelsJSON, stage) {
         return;
     }
     var levelsArray = JSON.parse(levelsJSON);
-    if (levelsArray.length == 0) {
+    numLevels = Object.keys(levelsArray).length
+    if (numLevels == 0) {
         console.log("Error: Data is empty");
         return;
     }
-    if (stage > levelsArray.length) {
+    if (stage > numLevels) {
         console.log("No more stages");
         stage = 1;
+        level = levelsArray[1];
+        return;
     }
     level = levelsArray[stage];
 }
