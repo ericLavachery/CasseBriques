@@ -14,3 +14,16 @@ function checkFilled(zeid) {
         }
     }
 }
+
+if (getParamByName('brk1') != '' && getParamByName('brk1') != null) {
+    var newStage = [];
+    var i = 0;
+    while (i < 27) {
+        o = i+1;
+        newStage[i] = getParamByName('brk'+o);
+        i = i + 1;
+        if (i >= 100) {break;}
+    }
+    var level = newStage;
+    console.log(level);
+}
