@@ -21,6 +21,7 @@ var brickValue = 10;
 var brickBonus = 1;
 var vitesse = 150;
 var level = ["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","m","b","b","b","b","b","b","b","b"];
+// start ball random
 var ballstart = (Math.random() * (1.00 - 0.15) + 0.05).toFixed(2);
 
 function preload() {
@@ -34,7 +35,6 @@ function preload() {
     game.load.image('metal', 'img/metal.png');
     game.load.image('hardbrick', 'img/hard.png');
     game.load.spritesheet('ball', 'img/wobble.png', 20, 20);
-    // game.load.spritesheet('button', 'img/button.png', 120, 40);
 }
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -42,6 +42,7 @@ function create() {
     ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
     ball.anchor.set(0.5);
     game.physics.enable(ball, Phaser.Physics.ARCADE);
+    // start on click
     game.input.onDown.addOnce(function(){
         ball.body.velocity.set(vitesse, -vitesse);
     }, this);
@@ -72,6 +73,7 @@ function update() {
     game.physics.arcade.collide(ball, hardbricks, ballHitHardbrick);
     paddle.x = game.input.mousePointer.x || game.world.width*0.5;
 }
+// used to make random stages
 function initBricks() {
     brickInfo = {
         width: 50,
@@ -154,7 +156,6 @@ function parseLevels(levelsJSON, stage) {
     level = levelsArray[stage];
 }
 function initLevel() {
-    // console.log('in init '+level);
     brickInfo = {
         width: 50,
         height: 30,
